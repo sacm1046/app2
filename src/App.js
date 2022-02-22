@@ -1,17 +1,11 @@
-import React from "react";
+import Card from "./components/Card";
+import Navbar from "./components/Navbar";
 
-const App = () => {
+export default function App() {
   return (
-    <div style={{
-      margin: "10px",
-      padding:"10px",
-      textAlign:"center",
-      backgroundColor:"cyan"
-    }}>
-      <h1>App 2 mode</h1>
-    </div>
+    <>
+      <Navbar />
+      <Card />
+    </>
   )
 }
-
-export default App;
-

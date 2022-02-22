@@ -1,26 +1,37 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
+const packageJsonDeps = require('./package.json').dependencies;
 const path = require('path');
 
 module.exports = {
   entry: './src/index',
-  mode: 'development',
   devServer: {
-    static: path.join(__dirname, 'dist'),
+    open: true,
     port: 3002,
   },
   output: {
-    publicPath: 'auto',
+    path: path.resolve(__dirname, 'dist')
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
         options: {
-          presets: ['@babel/preset-react'],
+          presets: [
+            [
+              '@babel/preset-react',
+              {
+                runtime: 'automatic'
+              }
+            ]
+          ],
         },
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       },
     ],
   },
@@ -30,9 +41,19 @@ module.exports = {
       name: 'app2',
       filename: 'remoteEntry.js',
       exposes: {
-        './App': './src/App',
+        './Card': './src/components/Card',
+        './Navbar': './src/components/Navbar',
       },
-      shared: { react: { singleton: true }, 'react-dom': { singleton: true } },
+      shared: {
+        react: {
+          singleton: true,
+          requiredVersion: packageJsonDeps.react
+        },
+        'react-dom': {
+          singleton: true,
+          requiredVersion: packageJsonDeps["react-dom"] 
+        }
+      },
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html',
